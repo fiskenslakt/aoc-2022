@@ -1,17 +1,16 @@
-from aocd import data, submit
+from aocd import data
 
 
-c = data.split('\n\n')
+elves = data.split('\n\n')
 
-most = 0
-elves = []
-for elf in c:
-    cur = 0
-    for x in elf.split():
-        cur += int(x)
+calorie_sums = []
+for elf in elves:
+    elf_calories = 0
+    for snack in elf.split():
+        elf_calories += int(snack)
 
-    # most = max(most, cur)
-    elves.append(cur)
+    calorie_sums.append(elf_calories)
 
-# submit(most)
-submit(sum(sorted(elves)[-3:]))
+calorie_sums = sorted(calorie_sums, reverse=True)
+print('Part 1:', calorie_sums[0])
+print('Part 2:', sum(calorie_sums[:3]))
