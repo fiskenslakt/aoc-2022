@@ -1,4 +1,4 @@
-advent-of-code-data==1.2.2
+advent-of-code-data==1.2.3
 browser-cookie3==0.16.2
 more-itertools==9.0.0
 pudb==2022.1.3
