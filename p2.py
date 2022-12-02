@@ -1,39 +1,31 @@
-from aocd import lines, submit
+from aocd import lines
 
-x = {
-    'A': {'X': 3, 'Y': 6, 'Z': 0},
-    'B': {'X': 0, 'Y': 3, 'Z': 6},
-    'C': {'X': 6, 'Y': 0, 'Z': 3},
-}
-y = {'X': 1, 'Y': 2, 'Z': 3}
+rps = {'rock': 'scissors', 'paper': 'rock', 'scissors': 'paper'}
+manual = {'A': 'rock', 'B': 'paper', 'C': 'scissors',
+          'X': 'rock', 'Y': 'paper', 'Z': 'scissors'}
+shape_points = {'rock': 1, 'paper': 2, 'scissors': 3}
 
-score = 0
-score2 = 0
+incorrect_score = 0
+correct_score = 0
 for line in lines:
     elf, me = line.split()
+    elf_choice = manual[elf]
+    me_choice = manual[me]
 
-    score += x[elf][me] + y[me]
-    if me == 'X':
-        if elf == 'A':
-            score2 += 3
-        elif elf == 'B':
-            score2 += 1
-        else:
-            score2 += 2
-    elif me == 'Y':
-        if elf == 'A':
-            score2 += 3 + 1
-        elif elf == 'B':
-            score2 += 3 + 2
-        else:
-            score2 += 3 + 3
-    elif me == 'Z':
-        if elf == 'A':
-            score2 += 6 + 2
-        elif elf == 'B':
-            score2 += 6 + 3
-        else:
-            score2 += 6 + 1
+    if elf_choice == me_choice:
+        incorrect_score += shape_points[me_choice] + 3
+    elif rps[elf_choice] == me_choice:
+        incorrect_score += shape_points[me_choice]
+    else:
+        incorrect_score += shape_points[me_choice] + 6
 
+    if me == 'X':    # lose
+        correct_score += shape_points[rps[elf_choice]]
+    elif me == 'Y':  # draw
+        correct_score += shape_points[elf_choice] + 3
+    elif me == 'Z':  # win
+        me_choice = rps[rps[elf_choice]]
+        correct_score += shape_points[me_choice] + 6
 
-submit(score2)
+print('Part 1:', incorrect_score)
+print('Part 2:', correct_score)
