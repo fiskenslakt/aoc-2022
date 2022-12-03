@@ -1,32 +1,25 @@
-from aocd import lines, submit
+from aocd import lines
 from more_itertools import chunked
 
-# lines = '''vJrwpWtwJgWrhcsFMMfFFhFp
-# jqHRNqRjqzjGDLGLrsFMfFZSrLrFZsSL
-# PmmdzqPrVvPwwTWBwg
-# wMqvLMZHhHMvwLHjbvcjnnSBnvTQFn
-# ttgJtRGJQctTZtZT
-# CrZsJsPPZsGzwwsLwLmpwMDw'''.splitlines()
-
-t = 0
+total = 0
 for line in lines:
-    r1 = line[:len(line)//2]
-    r2 = line[len(line)//2:]
+    compartment1 = line[:len(line)//2]
+    compartment2 = line[len(line)//2:]
 
-    same = (set(r1) & set(r2)).pop()
-    # print(same, ord(same), ord(same) - 38)
-    if same.islower():
-        t += ord(same) - 96
+    common_item = (set(compartment1) & set(compartment2)).pop()
+    if common_item.islower():
+        total += ord(common_item) - 96
     else:
-        t += ord(same) - 38
+        total += ord(common_item) - 38
 
-# submit(t)
-t2 = 0
-for g1, g2, g3 in chunked(lines, 3):
-    badge = (set(g1) & set(g2) & set(g3)).pop()
+print('Part 1:', total)
+
+total = 0
+for group1, group2, group3 in chunked(lines, 3):
+    badge = (set(group1) & set(group2) & set(group3)).pop()
     if badge.islower():
-        t2 += ord(badge) - 96
+        total += ord(badge) - 96
     else:
-        t2 += ord(badge) - 38
+        total += ord(badge) - 38
 
-submit(t2)
+print('Part 2:', total)
