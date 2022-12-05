@@ -1,44 +1,38 @@
 import re
-from aocd import data, submit
 from collections import defaultdict
 
-stacks = defaultdict(list)
+from aocd import data
 
+stacks = {}
 stack_data, move_data = data.split('\n\n')
 
-cur_stack = 0
-last_char = ''
 for chars in zip(*stack_data.splitlines()):
-    # if not last_char.isalpha() and char.isalpha():
-    #     cur_stack += 1
-    # last_char = char
-
-    # if char.isalpha():
-    #     stacks[cur_stack].append(char)
     if chars[-1].isdigit():
+        stacks[chars[-1]] = defaultdict(list)
         for char in chars[-2::-1]:
             if char.isalpha():
-                stacks[chars[-1]].append(char)
-
-# for move in move_data.splitlines():
-#     n, s1, s2 = re.findall('\d+', move)
-
-#     for _ in range(int(n)):
-#         stacks[s2].append(stacks[s1].pop())
+                stacks[chars[-1]]['9000'].append(char)
+                stacks[chars[-1]]['9001'].append(char)
 
 for move in move_data.splitlines():
-    n, s1, s2 = re.findall('\d+', move)
+    amount, src, dest = re.findall('\d+', move)
+
+    for _ in range(int(amount)):
+        stacks[dest]['9000'].append(stacks[src]['9000'].pop())
 
     temp_stack = []
-    for _ in range(int(n)):
-        temp_stack.append(stacks[s1].pop())
+    for _ in range(int(amount)):
+        temp_stack.append(stacks[src]['9001'].pop())
 
-    for _ in range(int(n)):
-        stacks[s2].append(temp_stack.pop())
+    for _ in range(int(amount)):
+        stacks[dest]['9001'].append(temp_stack.pop())
 
-ans = ''
-for i in range(1,10):
-    ans += stacks[str(i)][-1]
-    # print(stacks[str(i)][-1], end='')
 
-submit(ans)
+crates_9000 = ''
+crates_9001 = ''
+for i in range(1, len(stacks)+1):
+    crates_9000 += stacks[str(i)]['9000'][-1]
+    crates_9001 += stacks[str(i)]['9001'][-1]
+
+print('Part 1:', crates_9000)
+print('Part 1:', crates_9001)
