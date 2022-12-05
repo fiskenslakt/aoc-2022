@@ -27,7 +27,6 @@ for move in move_data.splitlines():
     for _ in range(int(amount)):
         stacks[dest]['9001'].append(temp_stack.pop())
 
-
 crates_9000 = ''
 crates_9001 = ''
 for i in range(1, len(stacks)+1):
