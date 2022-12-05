@@ -1,6 +1,5 @@
 from aocd import data
 
-
 elves = data.split('\n\n')
 
 calorie_sums = []
