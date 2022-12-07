@@ -1,9 +1,11 @@
 import re
-from aocd import lines, submit
+from aocd import lines
 
 MAX_SIZE = 100_000
 TOTAL_DISKSPACE = 70_000_000
 UPDATE_SIZE = 30_000_000
+CMD_PATTERN = re.compile(r'\$ (cd|ls) ?(\.\.|\w+|/)?')
+FILE_PATTERN = re.compile(r'(\d+) (.+)')
 
 
 class Node:
@@ -16,60 +18,49 @@ class Node:
     def __repr__(self):
         return f'Node({self.name}, {self.size})'
 
-class Tree:
-    small_files = []
-    all_files = []
 
-    def __init__(self):
-        self.root = Node('/')
+def find_files(node):
+    dir_size = 0
+    child_dir_sizes = []
+    for child in node.children:
+        if child.size is not None:
+            dir_size += child.size
+        else:
+            child_dir_size, grandchildren_sizes = find_files(child)
+            dir_size += child_dir_size
+            child_dir_sizes.append(child_dir_size)
+            child_dir_sizes.extend(grandchildren_sizes)
+
+    return dir_size, child_dir_sizes
 
 
-cmd_pattern = re.compile(r'\$ (cd|ls) ?(\.\.|\w+|/)?')
-file_pattern = re.compile(r'(\d+) (.+)')
-fs = Tree()
+root = Node('/')
 cur_node = None
 
 for line in lines:
     if line.startswith('$'):
-        cmd = cmd_pattern.search(line)
-        if cmd[1] == 'cd':
-            if cmd[2] == '/':
-                cur_node = fs.root
-            elif cmd[2] == '..':
+        cmd, arg = CMD_PATTERN.search(line).groups()
+        if cmd == 'cd':
+            if arg == '/':
+                cur_node = root
+            elif arg == '..':
                 cur_node = cur_node.parent
             else:
-                new_node = Node(cmd[2], cur_node)
+                new_node = Node(arg, cur_node)
                 cur_node.children.append(new_node)
                 cur_node = new_node
 
-    if line.startswith('dir'):
-        pass
-
-    if m := file_pattern.search(line):
-        size, name = m.groups()
+    elif file_data := FILE_PATTERN.search(line):
+        size, name = file_data.groups()
         new_node = Node(name, cur_node, int(size))
         cur_node.children.append(new_node)
 
-def find_files(node):
-    total_size = 0
-    for child in node.children:
-        if child.size is not None:
-            total_size += child.size
-        else:
-            total_size += find_files(child)
-
-    if total_size <= MAX_SIZE:
-        fs.small_files.append(total_size)
-    fs.all_files.append(total_size)
-
-    return total_size
-
-total_used_space = find_files(fs.root)
-# submit(sum(fs.small_files))
+total_used_space, file_sizes = find_files(root)
+print('Part 1:', sum(size for size in file_sizes if size <= MAX_SIZE))
 
 unused_space = TOTAL_DISKSPACE - total_used_space
 space_needed = UPDATE_SIZE - unused_space
-for size in sorted(fs.all_files):
+for size in sorted(file_sizes):
     if size >= space_needed:
-        submit(size)
+        print('Part 2:', size)
         break
