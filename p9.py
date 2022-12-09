@@ -1,14 +1,6 @@
 from collections import defaultdict
-from aocd import lines, submit
 
-# lines = '''R 4
-# U 4
-# L 3
-# D 1
-# R 4
-# D 1
-# L 5
-# R 2'''.splitlines()
+from aocd import lines
 
 knight_moves = {
     -2+1j: -1+1j,
@@ -40,8 +32,6 @@ rope = [0j]*10
 short_rope_grid[rope[1]] += 1
 long_rope_grid[rope[9]] += 1
 
-# import pudb;pu.db
-
 for line in lines:
     d, n = line.split()
     for _ in range(int(n)):
@@ -57,16 +47,19 @@ for line in lines:
         for knot_idx, tail in enumerate(rope[1:], 1):
             head = rope[knot_idx-1]
 
+            # Either laterally adjacent or overlapping
             if (tail.real == head.real and abs(tail.imag - head.imag) <= 1
                     or tail.imag == head.imag and abs(tail.real - head.real) <= 1):
                 continue
 
+            # Diagonally adjacent
             if (tail + 1+1j == head
                     or tail - 1+1j == head
                     or tail + 1-1j == head
                     or tail - 1-1j == head):
                 continue
 
+            # More than 2 steps away
             if head - tail in normal_moves:
                 rope[knot_idx] += normal_moves[head - tail]
             elif head - tail in knight_moves:
@@ -77,20 +70,5 @@ for line in lines:
             short_rope_grid[rope[1]] += 1
             long_rope_grid[rope[9]] += 1
 
-print('Part 1:', (sum(v > 0 for v in short_rope_grid.values())))
-# print(rope)
-submit(sum(v > 0 for v in long_rope_grid.values()))
-
-#5 .H.H..
-#4 H...H.
-#3 ..T...
-#2 H...H.
-#1 .H.H..
-#  123456
-
-#5 ...TH.
-#4 ......
-#3 .3....
-#2 ......
-#1 ......
-#  123456
+print('Part 1:', sum(v > 0 for v in short_rope_grid.values()))
+print('Part 2:', sum(v > 0 for v in long_rope_grid.values()))
