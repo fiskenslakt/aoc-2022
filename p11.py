@@ -4,7 +4,7 @@ from collections import deque, defaultdict
 from functools import reduce
 from operator import add, mul
 
-from aocd import data, submit
+from aocd import data
 
 MONKEY_PATTERN = re.compile(r'Monkey (\d+):\n.+?: (.+)\n.+?= (.+)\n.+?(\d+)\n.+?(\d+)\n.+?(\d+)')
 OPERATIONS = {'*': mul, '+': add}
