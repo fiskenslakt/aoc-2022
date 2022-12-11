@@ -1,6 +1,6 @@
 import re
 from copy import deepcopy
-from collections import deque, defaultdict
+from collections import deque
 from functools import reduce
 from operator import add, mul
 
