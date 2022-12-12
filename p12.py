@@ -29,7 +29,7 @@ def bfs(queue):
             if (cur_cell == new_cell
                     or ord(cur_cell) + 1 == ord(new_cell)
                     or new_cell == 'a'
-                    or ord(cur_cell) > ord(new_cell)):
+                    or cur_cell > new_cell):
                 queue.append(((nx, ny), steps + 1))
                 visited.add((nx, ny))
 
