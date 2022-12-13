@@ -47,7 +47,7 @@ for i, pair in enumerate(pairs, 1):
 print('Part 1:', sum(indices))
 
 packets = list(map(literal_eval, data.split())) + DIVIDER_PACKETS
-packets = sorted(packets, key=cmp_to_key(check), reverse=True)
+packets.sort(key=cmp_to_key(check), reverse=True)
 
 indices = []
 for divider_packet in DIVIDER_PACKETS:
