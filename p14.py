@@ -1,7 +1,5 @@
-from aocd import lines, submit
+from aocd import lines
 
-# lines = '''498,4 -> 498,6 -> 496,6
-# 503,4 -> 502,4 -> 502,9 -> 494,9'''.splitlines()
 SAND_SOURCE = (500, 0)
 
 
@@ -63,13 +61,11 @@ while True:
                 break
 
         # sand entering "endless void"
-        if abyss and x < min_x or x > max_x or y >= max_y:
+        if abyss and (x < min_x or x > max_x or y >= max_y):
             abyss = False
-            # print('Part 1:', resting_sand)
-
+            print('Part 1:', resting_sand)
     else:
         continue
     break
 
-# display_cave()
-# submit(resting_sand)
+print('Part 2:', resting_sand)
