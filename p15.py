@@ -2,23 +2,17 @@ import re
 
 from aocd import lines, submit
 
-# lines = '''Sensor at x=2, y=18: closest beacon is at x=-2, y=15
-# Sensor at x=9, y=16: closest beacon is at x=10, y=16
-# Sensor at x=13, y=2: closest beacon is at x=15, y=3
-# Sensor at x=12, y=14: closest beacon is at x=10, y=16
-# Sensor at x=10, y=20: closest beacon is at x=10, y=16
-# Sensor at x=14, y=17: closest beacon is at x=10, y=16
-# Sensor at x=8, y=7: closest beacon is at x=2, y=10
-# Sensor at x=2, y=0: closest beacon is at x=2, y=10
-# Sensor at x=0, y=11: closest beacon is at x=2, y=10
-# Sensor at x=20, y=14: closest beacon is at x=25, y=17
-# Sensor at x=17, y=20: closest beacon is at x=21, y=22
-# Sensor at x=16, y=7: closest beacon is at x=15, y=3
-# Sensor at x=14, y=3: closest beacon is at x=15, y=3
-# Sensor at x=20, y=1: closest beacon is at x=15, y=3'''.splitlines()
 
 SENSOR_DATA_PATTERN = re.compile(r'.+x=(-?\d+), y=(-?\d+).+x=(-?\d+), y=(-?\d+)')
 NO_BEACON_ROW = 2_000_000
+MAX_XY = 4_000_000
+
+
+def in_sensor_range(sx, sy, px, py):
+    radius = cave[(sx, sy)]['radius']
+    dist = abs(sx - px) + abs(sy - py)
+    return dist <= radius
+
 
 cave = {}
 sensors = []
@@ -35,6 +29,7 @@ for line in lines:
     beacons.append((bx, by))
 
 non_beacon_positions = set()
+
 for sensor in sensors:
     x, y = sensor
     radius = cave[sensor]['radius']
@@ -49,4 +44,46 @@ for sensor in sensors:
         else:
             non_beacon_positions.add((nx, NO_BEACON_ROW))
 
-print(len(non_beacon_positions))
+print('Part 1:', len(non_beacon_positions))
+
+for sensor in sensors:
+    x, y = sensor
+    radius = cave[sensor]['radius']
+
+    for i in range(-radius-1, radius+2):
+        nx = x-i
+        delta = radius + 1 - i
+
+        if nx < 0 or nx > MAX_XY:
+            continue
+
+        for sensor2 in sensors:
+            if sensor2 == sensor:
+                continue
+            if y+delta < 0 or y+delta > MAX_XY:
+                break
+            sx, sy = sensor2
+            if in_sensor_range(sx, sy, nx, y+delta):
+                break
+        else:
+            distress_beacon = (nx, y+delta)
+            break
+
+        # Don't check the same point twice.
+        if delta == 0:
+            continue
+
+        for sensor2 in sensors:
+            if sensor2 == sensor:
+                continue
+            if y-delta < 0 or y-delta > MAX_XY:
+                break
+            sx, sy = sensor2
+            if in_sensor_range(sx, sy, nx, y-delta):
+                break
+        else:
+            distress_beacon = (nx, y-delta)
+            break
+
+tuning_freq = distress_beacon[0] * MAX_XY + distress_beacon[1]
+print('Part 2:', tuning_freq)
