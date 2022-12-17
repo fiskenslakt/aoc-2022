@@ -1,26 +1,6 @@
 from itertools import cycle
 
-from aocd import data as jet_pattern, submit
-
-# jet_pattern = '''>>><<><>><<<>><>>><<<>>><<<><<<>><>><<>>'''
-
-'''####
-
-.#.
-###
-.#.
-
-..#
-..#
-###
-
-#
-#
-#
-#
-
-##
-##'''
+from aocd import data as jet_pattern
 
 ROCKS = (
     ((0,0), (1,0), (2,0), (3,0)),
@@ -32,12 +12,12 @@ ROCKS = (
 
 highest_point = 0
 resting_rocks = 0
+# Initialize chamber with a floor.
 chamber = {(0,0), (1,0), (2,0), (3,0), (4,0), (5,0), (6,0)}
 jet_idx = 0
 prev_states = {}
 part1, part2 = False, False
 
-# import pudb;pu.db
 
 for rock in cycle(ROCKS):
     if resting_rocks == 2022:
@@ -81,7 +61,6 @@ for rock in cycle(ROCKS):
 
                 state = (rock, jet_idx, fingerprint)
                 if state in prev_states and not part2:
-                    # print('found cycle:', resting_rocks, state)
                     part2 = True
                     cycle_length = resting_rocks - prev_states[state][1]
                     height_delta = highest_point - prev_states[state][0]
@@ -97,4 +76,3 @@ rock_delta = int(1e12) % cycle_length
 height_offset = list(prev_states.values())[rock_delta-1][0]
 resting_rocks_extreme_edition = int(1e12 // cycle_length * height_delta) + height_offset
 print('Part 2:', resting_rocks_extreme_edition)
-submit(resting_rocks_extreme_edition)
