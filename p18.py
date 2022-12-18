@@ -1,20 +1,8 @@
 from collections import deque
 
-from aocd import lines, submit
+from aocd import lines
 
-# lines = '''2,2,2
-# 1,2,2
-# 3,2,2
-# 2,1,2
-# 2,3,2
-# 2,2,1
-# 2,2,3
-# 2,2,4
-# 2,2,6
-# 1,2,5
-# 3,2,5
-# 2,1,5
-# 2,3,5'''.splitlines()
+CUBE_SIDES = ((0,0,1), (0,0,-1), (0,1,0), (0,-1,0), (1,0,0), (-1,0,0))
 
 
 def bfs(x, y, z):
@@ -29,8 +17,9 @@ def bfs(x, y, z):
         if x < min_x or y < min_y or z < min_z:
             return True
 
-        for nx, ny, nz in ((0,0,1), (0,0,-1), (0,1,0), (0,-1,0), (1,0,0), (-1,0,0)):
-            if (x+nx, y+ny, z+nz) not in grid and (x+nx, y+ny, z+nz) not in seen:
+        for nx, ny, nz in CUBE_SIDES:
+            if ((x+nx, y+ny, z+nz) not in grid
+                    and (x+nx, y+ny, z+nz) not in seen):
                 queue.append((x+nx, y+ny, z+nz))
                 seen.add((x+nx, y+ny, z+nz))
 
@@ -60,24 +49,22 @@ exposed_sides = 0
 for x, y, z in grid:
     sides = 6
 
-    for nx, ny, nz in ((0,0,1), (0,0,-1), (0,1,0), (0,-1,0), (1,0,0), (-1,0,0)):
+    for nx, ny, nz in CUBE_SIDES:
         if (x+nx, y+ny, z+nz) in grid:
             sides -= 1
 
-    print(sides, (x,y,z))
     exposed_sides += sides
 
 print('Part 1:', exposed_sides)
-# import pudb;pu.db
+
 exposed_sides = 0
 for x, y, z in grid:
     sides = 0
 
-    for nx, ny, nz in ((0,0,1), (0,0,-1), (0,1,0), (0,-1,0), (1,0,0), (-1,0,0)):
+    for nx, ny, nz in CUBE_SIDES:
         if (x+nx, y+ny, z+nz) not in grid and bfs(x+nx, y+ny, z+nz):
             sides += 1
 
-    print(sides, (x,y,z))
     exposed_sides += sides
 
-submit(exposed_sides)
+print('Part 2:', exposed_sides)
